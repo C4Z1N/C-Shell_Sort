@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_SIZE 15
+
+int arr[MAX_SIZE];
+int shellSort = 0;
+int insertionSort = 0;
+int n = 0;
+int p = 0;
+
+void levelPrint(int p) {
+	printf("%3d단계 : ", p);
+	for (int i = 0; i < MAX_SIZE; i++) {
+		printf("%2d ", arr[i]);
+	}
+	printf("\n");
+}
+
+void kprint(int h) {
+	for (int i = 0; i < h; i++) {
+		int count = 0;
+		printf("  ");
+		for (int l = 0; l < i; l++) {
+			printf("__ ");
+			count++;
+		}
+		for (int j = i; j < MAX_SIZE; j += h) {
+			printf("%2d ", arr[j]);
+			count++;
+			for (int m = 1; m < h && count < MAX_SIZE; m++) {
+				printf("__ ");
+				count++;
+			}
+		}
+		printf("\n");
+	}
+}
+
+void searchP(int newes) {
+	while (1) {
+		if (newes == 1) {
+			break;
+		}
+		newes = (newes / 2) % 2 == 0 ? newes / 2 + 1 : newes / 2;
+		p++;
+	}
+}
+
+void selection_sort() {
+	int min, least, x;
+	levelPrint(0);
+	for (int i = 0; i < MAX_SIZE - 1; i++) {
+		least = i;
+		min = arr[least];
+		for (int j = i; j < MAX_SIZE; j++) {
+			if (min > arr[j]) {
+				min = arr[j];
+				x = j;
+			}
+		}
+		arr[x] = arr[least];
+		arr[least] = min;
+		x = least + 1;
+		levelPrint(i + 1);
+	}
+}
+
+void insertion_sort(int keep, int k) {
+	int key, x;
+	if (shellSort == 1) {
+		levelPrint(n);
+		printf("\n");
+		kprint(k);
+		printf("\n");
+	}
+	else if (insertionSort == 1 || (insertionSort == 0 && k == 1)) {
+		levelPrint(n);
+	}
+	for (int i = keep + k; i < MAX_SIZE; i += k) {
+		key = arr[i];
+		for (int j = i - k; j >= 0; j -= k) {
+			if (key < arr[j]) {
+				arr[j + k] = arr[j];
+				// x = j;
+				arr[j] = key;
+			}
+			else if (key > arr[j]) {
+				arr[j + k] = key;
+				break;
+			}
+		}
+		// arr[x] = key;
+		if (shellSort == 0 && insertionSort == 1 || (shellSort == 1 && insertionSort == 0 && k == 1)) levelPrint(i);
+	}
+	shellSort = 0;
+	insertionSort == 0;
+}
+
+void Bubble_sort() {
+	levelPrint(0);
+	for (int i = 1; i < MAX_SIZE; i++) {
+		for (int j = 0; j < MAX_SIZE - i; j++) {
+			int temp;
+			if (arr[j] > arr[j + 1]) {
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+		}
+		levelPrint(i);
+	}
+}
+
+void shell_sort() {
+	int k = MAX_SIZE;
+	searchP(MAX_SIZE);
+	for (int i = 0; i < p; i++) {
+		if ((k / 2) % 2 == 0) k = k / 2 + 1;
+		else k /= 2;
+		shellSort = 1;
+		insertionSort = 0;
+		n++;
+		printf("\n  k = %d\n", k);
+		for (int j = 0; j < k; j++) {
+			insertion_sort(j, k);
+		}
+		kprint(k);
+	}
+}
+
+int main() {
+	srand(time(NULL));
+	int n = MAX_SIZE;
+	for (int i = 0; i < n; i++) {
+		arr[i] = rand() % 100;
+	}
+
+	/*selection_sort();
+	insertionSort = 1;
+	insertion_sort(0, 1);
+	Bubble_sort();*/
+	shell_sort();
+	printf("\n");
+	return 0;
+}
